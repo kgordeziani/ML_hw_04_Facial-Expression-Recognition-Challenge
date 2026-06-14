@@ -15,6 +15,8 @@ Challenges in Representation Learning: Facial Expression Recognition Challenge
 <img width="2172" height="314" alt="image" src="https://github.com/user-attachments/assets/845fa871-1b2e-43d8-a7cb-7456d26141dc" />
 ასეთი საოცარი ემოციები გვაქ.
 აქაც ცხადია train დატა დავსპლიტე train-ად და validation-ად. Train:  (25838, 2) Val:  (2871, 2)
+თავიდან train.csv-ის (28,709 sample) დაყოფას ვაკეთებდით 2 ნაწილად — train (90%) და validation (10%), stratified split-ით. თუმცა, რადგან validation set-ს ვიყენებდით ერთდროულად ორი მიზნით — training-ის დროს overfitting-ის მონიტორინგისთვის და სხვადასხვა architecture-ისა და hyperparameter-ის შედარებისთვის — გადავწყვიტეთ დაყოფა 3 ნაწილად გადაგვეკეთებინა: train (70%), validation (15%), test (15%), stratified split-ით ემოციების ბალანსის შესაბამისად.
+ამ ცვლილების მიზანი: validation set გამოვიყენებთ training-ის მონიტორინგისა და architecture/hyperparameter-ის შერჩევისთვის, ხოლო test set დარჩება სრულად "უცნობი" — მას გამოვიყენებთ მხოლოდ ერთხელ, საუკეთესო model-ზე, საბოლოო, მიუკერძოებელი accuracy-ის გამოსათვლელად. ეს გვაშორებს იმ რისკს, რომ ჩვენი საბოლოო შედეგები იყოს ოპტიმისტურად "მორგებული" validation set-ზე, რომელზეც decision-making-ი მოხდა. გამოვიყენე stratified splitting, რადგან თანაბრად ყოფილიყო ემოციის გადანაწილება საბსეტებში და მოდელს შეძლებოდა განზოგადება და თითოეული ემოციის სწორად დასწავლა. შემდეგ გავუკეთე ნორმალიზაცია, ანუ პიქსელების მნიშვნელობები [0, 255] გადავიყვანე [0, 1]-ში.
 
 
 
