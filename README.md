@@ -3,40 +3,48 @@ Challenges in Representation Learning: Facial Expression Recognition Challenge
 
 --- 
 ## კონკურსის მიმოხილვა
-კონკურსის მიზანია ადამინაის სახის გამოსახულებიდან 7 სავარაუდო ემოციის ამოცნობა. train.csv შეიცავდა 2 სვეტს, ემოციებისას- რომელიც შეიცავს ნულიდან ექვსამდე მნიშნელობებს (0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Sad, 5=Surprise, 6=Neutral), და პიქსელების სტრინგს. ეს ამოცანა ფასდება accuracy-ს მიხედვით. 
+კონკურსის მიზანია ადამიანის სახის გამოსახულებიდან 7 სავარაუდო ემოციის ამოცნობა. train.csv შეიცავდა 2 სვეტს, ემოციებისას- რომელიც შეიცავს ნულიდან ექვსამდე მნიშნელობებს (0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Sad, 5=Surprise, 6=Neutral), და პიქსელების სტრინგს. ეს ამოცანა ფასდება accuracy-ს მიხედვით. 
 
 ---
 ## რეპოზიტორიის სტრუქტურა
 
 ---
 ## მონაცემების დამუშვება (Setup & EDA)
-გადავწყვიტე რომ ცალკე ნოუთბუქში მქონდეს setup და ასევე  data understanding, რასაც შემდეგ ყველა სხვა ნოუთბუქში გამოვიყენებ. ყოველი ახალი ნოუთბუქი იქნება ახალი არქიტექტურისთვის. ამ ამოცანი ერთ-ერთ მთავარი გამოწვევა არის  დაუბალანსებელი დატა
+გადავწყვიტე რომ ცალკე ნოუთბუქში მქონდეს setup და ასევე  data understanding, რასაც შემდეგ ყველა სხვა architecture-ის notebook-ში იმპორტით  გამოვიყენებ. ეს უზრუნველყოფს, რომ ყველა არქიტექტურა იდენტურ data preprocessing-ს და split-ს მიმართავდეს. ამ ამოცანი ერთ-ერთ მთავარი გამოწვევა არის  დაუბალანსებელი დატა
 <img width="1532" height="962" alt="Screenshot 2026-06-14 123936" src="https://github.com/user-attachments/assets/71cdc532-a9d8-4039-a308-fb84610f883f" />
+ეს აუცილებლად გასათვალისწინებელია, რადგან მოდელი "ეცდება" უგულებელყოს იშვიათი კლასები, ხოლო ხშირ კლასებს უფრო დიდ ყურადღებას მიაქცევს, ამის შედარებას გავაკეთებთ confusion matrix-ებით.
+როგორც ვნახეთ გვაქვს 7 სავარაუდო ემოცია.
 <img width="2172" height="314" alt="image" src="https://github.com/user-attachments/assets/845fa871-1b2e-43d8-a7cb-7456d26141dc" />
-ასეთი საოცარი ემოციები გვაქ.
-აქაც ცხადია train დატა დავსპლიტე train-ად და validation-ად. Train:  (25838, 2) Val:  (2871, 2)
-თავიდან train.csv-ის (28,709 sample) დაყოფას ვაკეთებდით 2 ნაწილად — train (90%) და validation (10%), stratified split-ით. თუმცა, რადგან validation set-ს ვიყენებდით ერთდროულად ორი მიზნით — training-ის დროს overfitting-ის მონიტორინგისთვის და სხვადასხვა architecture-ისა და hyperparameter-ის შედარებისთვის — გადავწყვიტეთ დაყოფა 3 ნაწილად გადაგვეკეთებინა: train (70%), validation (15%), test (15%), stratified split-ით ემოციების ბალანსის შესაბამისად.
-ამ ცვლილების მიზანი: validation set გამოვიყენებთ training-ის მონიტორინგისა და architecture/hyperparameter-ის შერჩევისთვის, ხოლო test set დარჩება სრულად "უცნობი" — მას გამოვიყენებთ მხოლოდ ერთხელ, საუკეთესო model-ზე, საბოლოო, მიუკერძოებელი accuracy-ის გამოსათვლელად. ეს გვაშორებს იმ რისკს, რომ ჩვენი საბოლოო შედეგები იყოს ოპტიმისტურად "მორგებული" validation set-ზე, რომელზეც decision-making-ი მოხდა. გამოვიყენე stratified splitting, რადგან თანაბრად ყოფილიყო ემოციის გადანაწილება საბსეტებში და მოდელს შეძლებოდა განზოგადება და თითოეული ემოციის სწორად დასწავლა. შემდეგ გავუკეთე ნორმალიზაცია, ანუ პიქსელების მნიშვნელობები [0, 255] გადავიყვანე [0, 1]-ში.
+თავიდან დატის დაყოფას ვაკეთებდით 2 ნაწილად — train (90%) და validation (10%). 
+<img width="560" height="42" alt="image" src="https://github.com/user-attachments/assets/2b774eb2-65a4-4bc0-a3ab-fd525fd98616" />
+თუმცა, რადგან validation set-ს ვიყენებდით ერთდროულად ორი მიზნისთვის — training-ის დროს overfitting-ის მონიტორინგისთვის და სხვადასხვა architecture-ისა და hyperparameter-ის შედარებისთვის — ჩავთავლე უმჯობესი ინქბეოდა სამ ნაწილად დაყოფა:  train (70%), validation (15%), test (15%). ვალიდაციის დატას გამოვიყენებ ტრეინინგის დროს საუკეთესო არქიტექტურის არჩევისთვის, overfitting/underfitting-ის შეფასებითა და accuracy-ის მიხედვით, ხოლო სულ ბოლოს test-ის ნაწილს გამოვიყენებ როგროც სრულიად უცხო დატას მოდელისთვის, რომ შეძლოს მიუკერძოებლად შეფასება. ეს თავიდან გვარიდებს საფრთეს, რომ ჩვენი საბოლოო შედეგები იყოს ოპტიმისტურად "მორგებული" validation set-ზე, რომელზეც decision-making-ი მოხდა. გამოვიყენე stratified splitting, რადგან თანაბრად ყოფილიყო ემოციის გადანაწილება საბსეტებში და მოდელს შეძლებოდა განზოგადება და თითოეული ემოციის სწორად დასწავლა. შემდეგ გავუკეთე ნორმალიზაცია, ანუ პიქსელების მნიშვნელობები [0, 255] გადავიყვანე [0, 1]-ში.
 
 ---
 ## პირველი, ყველაზე მარტივი არქიტექტურა
-ეს არქიტექტურა შედგება 2 convolutional layer-ისგან (16 და 32 filter-ით, 3x3 kernel, padding=1), თითოეულის შემდეგ ReLU activation და MaxPooling (2x2). ბოლოს — flatten და ერთი fully-connected layer 7 emotion class-ისთვის. Loss function — CrossEntropyLoss (multi-class classification-ისთვის სტანდარტული), ოპტიმაიზერი — Adam (lr=0.001), batch size — 64. Training 10 epoch-ზე გავუშვით.
-Hyperparameter Run-ები:
+ყველაზე მინიმალისტური არქიტექტურისთვის ავიღე 
+ეს არქიტექტურა შედგება 2 convolutional layer-ისგან (16 და 32 filter-ით, 3x3 kernel, padding=1), თითოეულის შემდეგ ReLU activation და MaxPooling (2x2). ბოლოს — flatten და ერთი fully-connected layer 7 emotion class-ისთვის. ამ მარტივი მოდელით ვნახავთ მაქსიმუმ რამხელა accuracy-ის მიღწევაა შესაძლებელი, ზედემტი ოპტიმიზაციების გარეშე. 
+Loss function-ად ავიღე  CrossEntropyLoss, რომელიც  multi-class classification-ისთვის ყველაზე სტანდარტულია. ტრეინინგს ვაკეთბ 10 ეპოქაზე და ჰიპერპარამეტრებს ვცვლი და ამოვარჩევ საბოლოო ანალიზის მიხედვით.  Batch size-ისთის ვიდიქრე, რომ ყველაზე კარგი იქნებოდა 64-ის აღება, რადგან პატარა batch-ები პირველ რიგში ტრეინინგის დროს გაზრდიდნენ და გრადიენტებსაც უფრო "ხმაურიანს" გახდნიდნენ. ხოლო დიდი batch-ები მეტ მემორის მოითხოვენ და განზოგადებას უშლიან ხელს. 
+ასევე ვაკეთებ shuffle=True, რომ ყოველ epoch-ზე batch-ების მიმდევრობა შეიცვალოს და ამით ერთგვარად ხელს ვუშლი, რომ მოდელი წავიდეს overfitting-ში. 
 
-* Run 1 (lr=0.001, bs=64): max validation accuracy = X.XXXX, epoch Y-ზე
-* Run 2 (lr=0.0001, bs=64): max validation accuracy = X.XXXX
-* Run 3 (lr=0.001, bs=32): max validation accuracy = X.XXXX
+### sanity check
+#### forward pass check
+Model-ის forward pass-ის სისწორის შესამოწმებლად  გავაკეთე ორი მთავარი ჩეკი: (1) output shape-ის ვერიფიკაცია <img width="634" height="88" alt="image" src="https://github.com/user-attachments/assets/8ff85844-9597-4775-85df-7627eeb4ce16" />
+ეს გვიდასტურებს, რომ მოდელის არქიტექტურა სწორად ამუშავებს  input dimensions-ს და output-ში სწორი რაოდენობის class scores გვაძლევს. (2) ასევე მოდელის forward pass-ის სისწორეს ვამოწმებთ თუ რამდენად, მოსალოდენლი ლოსი დაგვიბრუნება ანუ CrossEntropyLoss-ის გამოთვლით. თუ მიღებული ლოსი იქნება ლოგიკური და მოლოდინთან ახლოს, ანუ სწორად მუშაობს ჩვენი არქიტექტურა და თუ არა ანუ შეცდომა გვაქ. <img width="846" height="88" alt="image" src="https://github.com/user-attachments/assets/08f19b54-5307-4bac-aada-8ec5092e86d7" />
+რადგან მოსალოდნეთან ახლოს მივიღეთ ლოსი შეგვილია ვთქვათ, რომ სწორად მუშობს. 
 
-ანალიზი: [training/validation curves-ის აღწერა — overfitting/underfitting ნიშნები, რომელი run საუკეთესოა და რატომ, რა დასკვნა გავაკეთეთ შემდეგი architecture-ისთვის]
-Batch size განსაზღვრავს, რამდენი sample-ი მუშავდება ერთდროულად, ერთი gradient update-ის წინ.
+#### backprop check
+თავიდან ვნახე რა შედეგს დადებდა, თუ გამოვტოვებდი zero_grad()-ს, ანუ მოდელი ყოველ ბეჩზე დააბდეითების მაგივრად ინახავდა ძველ გრადიენტებს, რის გამოც სწავლა გახდა არასტაბილური და საბოლოოდ ის უბრალოდ ერთ კლასს იწინასწარმეტყველებს.
+<img width="514" height="176" alt="image" src="https://github.com/user-attachments/assets/debc85fc-52a8-42df-ae8e-25ea3f6d6381" />
 
-პატარა batch (მაგ. 16, 32): noisier gradients (sample-ების მცირე ჯგუფი ნაკლებად representative-ია), მაგრამ ხშირი update-ები — ხანდახან better generalization, მაგრამ training ნელია (ბევრი iteration).
-დიდი batch (მაგ. 128, 256): stable gradients (averaged ბევრ sample-ზე), სწრაფი training (GPU-ის better utilization), მაგრამ შეიძლება ცუდი generalization ("sharp minima"-ში მოხვედრა) და მეტი memory მოითხოვს.
-64 — ეს არის "ოქროს შუალედი" — საკმარისად დიდი stable gradient-ისთვის, საკმარისად პატარა GPU memory-სთვის (Colab T4-ზე კომფორტულია 48x48 grayscale images-ისთვის) და ეს ერთ-ერთი ყველაზე ხშირად გამოყენებული default-ია image classification task-ებში.
+Backpropagation-ის სწორად მუშაობის დასადასტურებლად, SimpleCNN model-ი  დავატრეინინგე  გაცილებით პატარა დატაზე (200-sample subset-ზე) , რომ მიმეღო overfitting, ამით დავადასტურებდი, რომ ჩემს მოდელს აქვს შანსი დიდ დატაზე განზოგადების უნარი.
+<img width="286" height="228" alt="image" src="https://github.com/user-attachments/assets/d49475f5-73bc-423a-87dc-dfcae66fc094" />
+შედეგად მართლაც მივიღეთ overfitting, ამიტომ ჩვენი არქიტექურა გამრთულად მუშაობს. 
 
-ამ ეტაპზე 64 დასაბუთებული საწყისი წერტილია, და მერე hyperparameter sweep-ში batch size-საც შევცვლით და ვნახავთ ეფექტს.
+#### შეფასება
+<img width="1982" height="516" alt="image" src="https://github.com/user-attachments/assets/7a4d1de9-d98c-4ccd-8330-2e0d34b13652" />
+სხვადასხვა პარამეტრების შედეგებეია და ვინაიდან ჩვენ ვაფასებთ val_acc-train_acc -ით საუკეთსო შედეგი მოგვცა მესამემ, lr0.001-bs32-adam. 
 
-ახსნა: shuffle=True train-ისთვის (ყოველ epoch-ზე batch-ების მიმდევრობა იცვლება — overfitting-ის შემცირება), shuffle=False val/test-ისთვის (consistency, არ ცვლის შედეგებს მაგრამ კარგი პრაქტიკაა).
+
 
 
 
