@@ -7,6 +7,23 @@ Challenges in Representation Learning: Facial Expression Recognition Challenge
 
 ---
 ## რეპოზიტორიის სტრუქტურა
+```
+facial-expression-recognition/
+│
+├── notebooks/
+│   ├── Setup_and_eda.ipynb              # მონაცემთა პირველადი ანალიზი (EDA) და მომზადება
+│   ├── 01_simple_cnn.ipynb              # საბაზისო მარტივი CNN არქიტექტურა (Baseline)
+│   ├── 02_deeper_cnn.ipynb              # გაღრმავებული CNN მოდელების ექსპერიმენტები
+|   ├── 03_balanced_augmented_cnn.ipynb  # მონაცემთა დაბალანსება (Sampler), აუგმენტაციები და weight sampling
+│   └── 04_resnet_transfer_cnn.ipynb     # ტრანსფერული სწავლება (ResNet18), საბოლოოდ ფინალური 112x112 რეზოლუცია
+│
+├── src/
+│   └── dataset.py                       # PyTorch Custom FERDataset კლასი მონაცემების მენეჯმენტისთვის
+│
+├── .gitignore                           # გიტის მიერ დასაიგნორებელი ფაილები (დატასეტი, ჩექპოინტები)
+└── README.md                            # პროექტის აღწერა და იტერაციული ექსპერიმენტების კვლევა
+```
+---
 
 ---
 ## მონაცემების დამუშვება (Setup & EDA)
@@ -15,8 +32,10 @@ Challenges in Representation Learning: Facial Expression Recognition Challenge
 ეს აუცილებლად გასათვალისწინებელია, რადგან მოდელი "ეცდება" უგულებელყოს იშვიათი კლასები, ხოლო ხშირ კლასებს უფრო დიდ ყურადღებას მიაქცევს, ამის შედარებას გავაკეთებთ confusion matrix-ებით.
 როგორც ვნახეთ გვაქვს 7 სავარაუდო ემოცია.
 <img width="2172" height="314" alt="image" src="https://github.com/user-attachments/assets/845fa871-1b2e-43d8-a7cb-7456d26141dc" />
+
 თავიდან დატის დაყოფას ვაკეთებდით 2 ნაწილად — train (90%) და validation (10%). 
 <img width="560" height="42" alt="image" src="https://github.com/user-attachments/assets/2b774eb2-65a4-4bc0-a3ab-fd525fd98616" />
+
 თუმცა, რადგან validation set-ს ვიყენებდით ერთდროულად ორი მიზნისთვის — training-ის დროს overfitting-ის მონიტორინგისთვის და სხვადასხვა architecture-ისა და hyperparameter-ის შედარებისთვის — ჩავთავლე უმჯობესი ინქბეოდა სამ ნაწილად დაყოფა:  train (70%), validation (15%), test (15%). ვალიდაციის დატას გამოვიყენებ ტრეინინგის დროს საუკეთესო არქიტექტურის არჩევისთვის, overfitting/underfitting-ის შეფასებითა და accuracy-ის მიხედვით, ხოლო სულ ბოლოს test-ის ნაწილს გამოვიყენებ როგროც სრულიად უცხო დატას მოდელისთვის, რომ შეძლოს მიუკერძოებლად შეფასება. ეს თავიდან გვარიდებს საფრთეს, რომ ჩვენი საბოლოო შედეგები იყოს ოპტიმისტურად "მორგებული" validation set-ზე, რომელზეც decision-making-ი მოხდა. გამოვიყენე stratified splitting, რადგან თანაბრად ყოფილიყო ემოციის გადანაწილება საბსეტებში და მოდელს შეძლებოდა განზოგადება და თითოეული ემოციის სწორად დასწავლა. შემდეგ გავუკეთე ნორმალიზაცია, ანუ პიქსელების მნიშვნელობები [0, 255] გადავიყვანე [0, 1]-ში.
 
 ---
