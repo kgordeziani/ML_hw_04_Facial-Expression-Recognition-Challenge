@@ -49,7 +49,8 @@ facial-expression-recognition/
 სანამ მოდელს საბოლოო დიდ დატაზე გავუშვებდი შევამოწმე რამდენად სწორად მუშაობს მათემატიკურად და მოგიკურად forrward pass და backpropagation.
 
 #### forward pass check
-Model-ის forward pass-ის სისწორის შესამოწმებლად  გავაკეთე ორი მთავარი ჩეკი: (1) output shape-ის ვერიფიკაცია <img width="634" height="88" alt="image" src="https://github.com/user-attachments/assets/8ff85844-9597-4775-85df-7627eeb4ce16" />
+Model-ის forward pass-ის სისწორის შესამოწმებლად  გავაკეთე ორი მთავარი ჩეკი: (1) output shape-ის ვერიფიკაცია
+<img width="634" height="88" alt="image" src="https://github.com/user-attachments/assets/8ff85844-9597-4775-85df-7627eeb4ce16" />
 ეს გვიდასტურებს, რომ მოდელის არქიტექტურა სწორად ამუშავებს  input dimensions-ს და output-ში სწორი რაოდენობის class scores გვაძლევს. (2) ასევე მოდელის forward pass-ის სისწორეს ვამოწმებთ თუ რამდენად, მოსალოდენლი ლოსი დაგვიბრუნება.  თუ მიღებული ლოსი იქნება ლოგიკური და მოლოდინთან ახლოს, ანუ სწორად მუშაობს ჩვენი არქიტექტურა და თუ არა ანუ შეცდომა გვაქ.
 
 <img width="846" height="88" alt="image" src="https://github.com/user-attachments/assets/08f19b54-5307-4bac-aada-8ec5092e86d7" />
